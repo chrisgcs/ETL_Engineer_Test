@@ -47,14 +47,14 @@ SELECT DATE(t11.fecha) as fecha, t11.semana, t11.store, t11.store_branch_id, t11
  -- Calculo de la mediana agruapada por fecha y tienda
 		SELECT fecha, store, avg(distance) as median_val FROM (
 		SELECT t1.row_number, t1.distance, t1.fecha, t1.store FROM(
-		SELECT IF(@prev!=d.store, @rownum:=1, @rownum:=@rownum+1) as `row_number`, d.distance, @prev:=d.fecha as fecha, @prev:=d.store AS store
+		SELECT IF(@prev1!=d.store OR @prev2!=d.fecha, @rownum:=1, @rownum:=@rownum+1) as `row_number`, d.distance, @prev1:=d.store as store, @prev2:=d.fecha AS fecha
 		FROM manhattan_distance d, (SELECT @rownum:=0, @prev:=NULL) r
 		ORDER BY fecha, store, distance
 		) as t1 INNER JOIN  
 		(
 		  SELECT count(*) as total_rows, store 
 		  FROM manhattan_distance d
-		  GROUP BY store
+		  GROUP BY fecha,store
 		) as t2
 		ON t1.store = t2.store
 		WHERE 1=1
